@@ -4,20 +4,21 @@ import TrieNode
 import TimedTrie
 import copy
 import pandas as pd
-import tabulate
+from tabulate import tabulate
 
 import TimedTrie
 import TrieNode
 
 
 class PatternMiner:
-    def __init__(self, timedTrie: TimedTrie, timed_trace):
+    def __init__(self, timedTrie: TrieNode, timed_trace, timed_trie_model: TimedTrie):
         self.extractedPatternList = [];
         self.extractedPatternList_str_count = [];
 
+        self.timed_trie_model = timed_trie_model
         self.timedTrie = timedTrie
         self.timed_trace = timed_trace  # the entire trace
-        self.max_depth = self.timedTrie.K
+        self.max_depth = self.timed_trie_model.K
 
     def extractPattern(self, node: TrieNode, current_d: int = 0, current_path: list = []):
         if current_d > self.max_depth:
@@ -26,7 +27,7 @@ class PatternMiner:
         currentPattern = ""
 
         for child in node.children:
-            if child.prob >= self.timedTrie.P_THRESHOLD or current_d == 0:
+            if child.prob >= self.timed_trie_model.P_THRESHOLD or current_d == 0:
                 new_path = current_path + [child]
                 self.extractedPatternList.append((copy.copy(new_path)))
 
@@ -89,12 +90,18 @@ class PatternMiner:
     def printPatternList_pretty(self):
 
         self.printFromPatternList(False)
-        extractedPatternList_DF = pd.DataFrame(self.extractedPatternList_str_count,
+
+        self.extractedPatternList_DF = pd.DataFrame(self.extractedPatternList_str_count,
                                                columns=["Pattern", "Count", "Support", "Confidence"])
-        extractedPatternList_DF.sort_values(by=["Count"], ascending=False, inplace=True)
+        self.extractedPatternList_DF.sort_values(by=["Count"], ascending=False, inplace=True)
 
-        print(tabulate(extractedPatternList_DF, headers='keys', tablefmt='psql'))
+        print(tabulate(self.extractedPatternList_DF, headers='keys', tablefmt='psql'))
 
+    """
+        Save Result
+    """
+    def save_result(self):
+        self.extractedPatternList_DF.to_csv("./Result/dominant_patterns.csv");
 
     """#Pruned Trie Model"""
     # Get a pruned and clean version of the state machine

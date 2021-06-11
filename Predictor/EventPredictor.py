@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import tabulate
+from tabulate import tabulate
 
 import TimedTrie
 import TrieNode
@@ -9,14 +9,16 @@ from Utility import Util
 
 
 class EventPredictor:
-    def __init__(self, params, timedTrie: TimedTrie, timed_trace):
+
+    def __init__(self, params, timedTrie: TrieNode, timed_trace, timed_trie_model: TimedTrie):
         self.VARIABILITY_OF_LOOKBACK = getattr(params, 'variable_lookback', True)
         self.PLOT_PROBABILITY_ALPBHABET_MAX_LENGTH = getattr(params, 'ignore_event_prob_plot_len_above',
                                                              15);  # Plot fails for large alpbhabet size
 
+        self.timed_trie_model = timed_trie_model
+        self.timed_trace = timed_trace  # the entire trace
         self.Alphabets = sorted(list(set(self.timed_trace[0])))
         self.timedTrie = timedTrie
-        self.timed_trace = timed_trace  # the entire trace
 
     def evaluate_time_probability_using_count(self):
         for index, val in enumerate(self.time_probability):
@@ -64,27 +66,28 @@ class EventPredictor:
 
             sub_sub_trace_timeEvent = (sub_sub_trace_event, sub_sub_trace_time)
 
-            if self.timedTrie.ENABLE_DEBUG:
+            if self.timed_trie_model.ENABLE_DEBUG:
                 print("k ", str(_k), "   filling --- ", sub_sub_trace_timeEvent)
 
             self.fill_time_probability_mat(root, sub_sub_trace_timeEvent)
 
-        if self.timedTrie.ENABLE_DEBUG:
+        if self.timed_trie_model.ENABLE_DEBUG:
             print("Count list ", self.time_probability)
         self.evaluate_time_probability_using_count()
 
     def predict(self, subtrace_timed):
-        self.tp_max = Util.get_time_length_based_on_lookback(subtrace_timed, self.VARIABILITY_OF_LOOKBACK)  # Look into this
+        self.tp_max = Util.get_time_length_based_on_lookback(self.timedTrie, subtrace_timed, self.VARIABILITY_OF_LOOKBACK)  # Look into this
         self.time_probability = np.zeros((self.tp_max, len(self.Alphabets)))
 
         self.fill_time_probability_mat_on_lookBack(subtrace_timed)
 
         time_probability_DF = pd.DataFrame(self.time_probability, columns=self.Alphabets, index=list(range(1, self.tp_max + 1)))
+        time_probability_DF.index.name = "Time (t)"
         print(tabulate(time_probability_DF, headers='keys', tablefmt='psql'))
 
     """#Plot Area Timed_Area graph"""
 
-    def plot_time_probability(self):
+    def plot_time_probability(self, save_figure=False):
 
         if len(self.Alphabets) > self.PLOT_PROBABILITY_ALPBHABET_MAX_LENGTH:
             print("Skipping plotting of probability graph since alphabet size more than {0}".format(
@@ -111,4 +114,8 @@ class EventPredictor:
             plt.xticks([r + barWidth for r in range(len(y))], list(range(1, len(self.time_probability) + 1)))
             plt.legend()
 
+            if save_figure == True:
+                plt.savefig("./Result/event_prediction_plot.png")
+
             plt.show()
+

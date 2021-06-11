@@ -1,3 +1,7 @@
+import pandas as pd
+
+import TrieNode
+
 def getNodeId(node_id: str):
     if len(node_id.split("_")) > 1:
         return str(int(node_id.split("_")[1]) - 1);
@@ -31,6 +35,7 @@ def getTimeShift(time):
 def doesStringContains(str="", whichWord=""):
     return str.find(whichWord) > -1
 
+
 def preprocess_input_file(file_path=""):
     """
         Read and preprocess input file
@@ -51,12 +56,11 @@ def preprocess_input_file(file_path=""):
     return (list(event), time)
 
 
-def determine_time_length(sub_sub_trace=[]):
+def determine_time_length(timed_trie: TrieNode, sub_sub_trace=[]):
     t_max = -1;
     pos = 0;
     sub_sub_trace_timeShifted = getTimeShift(sub_sub_trace[1])
 
-    global timed_trie
     root = timed_trie
 
     while pos < len(sub_sub_trace[0]):
@@ -64,19 +68,19 @@ def determine_time_length(sub_sub_trace=[]):
         for _child in root.children:
             if _child.char == _e and _child.t_min <= _t and _child.t_max >= _t:
 
-                if pos == len(sub_sub_trace[0])-1:
+                if pos == len(sub_sub_trace[0]) - 1:
                     for ___child in _child.children:
                         t_max = max(___child.t_list)
 
                 root = _child
-                break; # break for
+                break;  # break for
 
         pos += 1
 
     return t_max;
 
-def get_time_length_based_on_lookback(subTrace, variable_lookback: bool = True):
 
+def get_time_length_based_on_lookback(timed_trie: TrieNode, subTrace, variable_lookback: bool = True):
     t_max = 0;
     subTrace_len = len(subTrace[0])
 
@@ -87,7 +91,7 @@ def get_time_length_based_on_lookback(subTrace, variable_lookback: bool = True):
         sub_sub_trace = subTrace[0][-_k:]
         sub_sub_trace_time = subTrace[1][-_k:]
 
-        __t_max_sub = determine_time_length((sub_sub_trace, sub_sub_trace_time))
+        __t_max_sub = determine_time_length(timed_trie, (sub_sub_trace, sub_sub_trace_time))
         t_max = max(t_max, __t_max_sub)
 
     return t_max

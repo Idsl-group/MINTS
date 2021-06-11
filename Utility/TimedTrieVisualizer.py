@@ -1,7 +1,7 @@
 from graphviz import Digraph
 
 import TrieNode
-
+from Utility import Util
 
 def traverseAndCreaseDigraph(dot: Digraph, node: TrieNode, state_graph=False):
     parent_id = node.char if not state_graph else Util.getStateId(node.node_id)
@@ -47,5 +47,5 @@ def visualizeTrie(timed_trie: TrieNode, state_graph=False):
 
 def renderTrie(timed_trie: TrieNode, diagram_name="timed_trie", state_graph=False):
     timed_trie_viz = visualizeTrie(timed_trie, state_graph)
-    timed_trie_viz.render(diagram_name + '.gv', view=True)
+    timed_trie_viz.render(diagram_name + '.gv', directory="./Result", view=True)
     return timed_trie_viz

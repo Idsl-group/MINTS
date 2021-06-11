@@ -20,8 +20,8 @@ timed_trace = util.preprocess_input_file(args.inputpath)
 if timed_trace == None:
     pass
 
-# print("Trace Length ", len(timed_trace[0]))
-# print("Unique Events ", len(set(timed_trace[0])))
+print("Trace Length ", len(timed_trace[0]))
+print("Unique Events ", len(set(timed_trace[0])))
 
 
 """
@@ -48,12 +48,12 @@ timed_automata = timed_trie_model.buildGraph(timed_trace)
 """
 
 # Dominant Patterns
-dominant_pattern_miner_model = DominantPatternMiner.PatternMiner(timed_automata, timed_trace)
+dominant_pattern_miner_model = DominantPatternMiner.PatternMiner(timed_automata, timed_trace, timed_trie_model)
 dominant_pattern_miner_model.extractPattern(timed_automata)
 dominant_pattern_miner_model.printPatternList_pretty()
 
 # Temporal Patterns
-temporal_pattern_miner_model = TemporalPatternMiner.TemporalPatternMiner(timed_automata, timed_trace)
+temporal_pattern_miner_model = TemporalPatternMiner.TemporalPatternMiner(timed_automata, timed_trace, timed_trie_model, dominant_pattern_miner_model)
 temporal_pattern_miner_model.extractTemporalPatterns()
 temporal_pattern_miner_model.printAllTemporalPatterns_pretty()
 
@@ -63,11 +63,13 @@ temporal_pattern_miner_model.printAllTemporalPatterns_pretty()
 """
 
 # Replace the following line with a trace for which the next event has to be predicted
-sample_sub_trace = SampleTraceUtil(params.depth, timed_trace)
+sample_sub_trace = SampleTraceUtil.getRandomSubtrace(params['depth'], timed_trace)
+print("Event Prediction")
+print("Predict subsequent event for Trace: ", sample_sub_trace)
 
-event_predicted_model = EventPredictor.EventPredictor(timed_automata, timed_trace)
+event_predicted_model = EventPredictor.EventPredictor(params, timed_automata, timed_trace, timed_trie_model)
 event_predicted_model.predict(sample_sub_trace)
-event_predicted_model.plot_time_probability()
+event_predicted_model.plot_time_probability(True)
 
 """
     Visualize
@@ -81,3 +83,8 @@ TimedTrieVisualizer.renderTrie(timed_automata, "Transition diagram", False)
 # TimedTrieVisualizer.renderTrie(pruned_timed_automata, "timed_trie_pruned_state_diagram", True)
 # TimedTrieVisualizer.renderTrie(pruned_timed_automata, "timed_trie_pruned", False)
 
+"""
+    Save results
+"""
+dominant_pattern_miner_model.save_result()
+temporal_pattern_miner_model.save_result()

@@ -1,8 +1,9 @@
 import statistics
 
 import numpy as np
+from Utility import Util
 
-import TrieNode
+from TrieNode import TrieNode
 
 class TimedTrie:
 
@@ -40,7 +41,7 @@ class TimedTrie:
                         child.t_min = min(child.t_min, time)
                         child.t_max = max(child.t_max, time)
                         child.t_list.append(time)
-                    traverseAndBuild(child, timedTrace, pos + 1)
+                    self.traverseAndBuild(child, timedTrace, pos + 1)
                     return
 
         if not found and doTimeCheck == False:  # only create for last element in the trace
@@ -51,7 +52,7 @@ class TimedTrie:
             newNode.t_list.append(time)
             newNode.count = 1
             node.children.append(newNode)
-            traverseAndBuild(newNode, timedTrace, pos + 1)
+            self.traverseAndBuild(newNode, timedTrace, pos + 1)
 
     def evaluateProb(self, node: TrieNode, d: int, current_d: int):
         if current_d > d:
@@ -87,12 +88,12 @@ class TimedTrie:
                 raise ZeroDivisionError
 
         for _child in node.children:
-            evaluateProb(_child, d, current_d + 1)
+            self.evaluateProb(_child, d, current_d + 1)
 
-    def evaluateHeightOfTree(node: TrieNode, d: int, current_d: int):
+    def evaluateHeightOfTree(self, node: TrieNode, d: int, current_d: int):
         max_child_height = 0;
         for _child in node.children:
-            max_child_height = max(max_child_height, evaluateHeightOfTree(_child, d, current_d + 1))
+            max_child_height = max(max_child_height, self.evaluateHeightOfTree(_child, d, current_d + 1))
 
         node.tree_height = max_child_height + 1;
         return node.tree_height
@@ -103,7 +104,7 @@ class TimedTrie:
 
         if current_d < d - 1:
             for child in node.children:
-                evaluateAtDepth(child, d, current_d + 1)
+                self.evaluateAtDepth(child, d, current_d + 1)
         else:
             node.t_mean = statistics.mean(node.t_list)
             if self.ENABLE_IQR:
@@ -125,7 +126,7 @@ class TimedTrie:
         self.global_node_count = 1
         self.trace_size = len(timed_trace[0])
 
-        root = self.TrieNode(global_node_count, "*")
+        root = TrieNode(self.global_node_count, "*")
         for k in list(range(1, K + 1)):
             # print("depth ------ ", k)
             for i in list(range(0, len(timed_trace[0]) + 1 - k)):
