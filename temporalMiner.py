@@ -7,6 +7,8 @@ from PatternMiner import DominantPatternMiner, TemporalPatternMiner
 from Utility import SampleTraceUtil, TimedTrieVisualizer
 from Predictor import EventPredictor
 
+# ==================   PART 1: Necessary imports / read trace / preprocessing (i.e only selecting event and timestamp) ==================
+
 """
     Read input file path from argument
 """
@@ -24,6 +26,7 @@ print("Trace Length ", len(timed_trace[0]))
 print("Unique Events ", len(set(timed_trace[0])))
 
 
+# ==================   PART 2: Build Model ==================
 """
     Define Params
 """
@@ -43,6 +46,8 @@ params = {
 timed_trie_model = TimedTrie(params)
 timed_automata = timed_trie_model.buildGraph(timed_trace)
 
+
+# ==================   PART 3: Extract Pattern (Dominant / Temporal) ==================
 """
     Extract Pattern
 """
@@ -58,6 +63,7 @@ temporal_pattern_miner_model.extractTemporalPatterns()
 temporal_pattern_miner_model.printAllTemporalPatterns_pretty()
 
 
+# ==================   PART 4: Event Prediction ==================
 """
    Event Prediction 
 """
@@ -71,6 +77,8 @@ event_predicted_model = EventPredictor.EventPredictor(params, timed_automata, ti
 event_predicted_model.predict(sample_sub_trace)
 event_predicted_model.plot_time_probability(True)
 
+
+# ==================   PART 5: How to Visualize the Timed Automata ==================
 """
     Visualize
 """
@@ -83,6 +91,8 @@ TimedTrieVisualizer.renderTrie(timed_automata, "Transition diagram", False)
 # TimedTrieVisualizer.renderTrie(pruned_timed_automata, "timed_trie_pruned_state_diagram", True)
 # TimedTrieVisualizer.renderTrie(pruned_timed_automata, "timed_trie_pruned", False)
 
+
+# ==================   (Misc.) PART 6: Save Result ==================
 """
     Save results
 """

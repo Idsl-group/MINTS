@@ -1,12 +1,85 @@
-# Timed Trie Representation
+# MINTS: Unsupervised Temporal Specification Miner
 
-The following project is for personal use. 
+Welcome. This repository contains implementation for our paper called 'MINTS: Unsupervised Temporal Specification Miner' 
 
 ## Objective
-To represent a given timed-series event trace as a graph network with time constraint over the edges.
+* Build a Time Automaton (TA) using event-time series trace.
+* Extract Dominant Properties from the TA
+* Extract Temporal Properties from the TA
+* Provide capability for event prediction using TA and prediction_trace
 
-## Features
-To be added
+## Package Requirement
 
-## Licsense
-M.I.T
+**OS (tested on)**: Ubuntu 18.04.5 LTS x86_64 \
+**System Spec (tested on)** Intel i7-2630QM (8) @ 2.900GHz, 8 GB DDR3, 256 GB SSD \
+**Language:** Python 3 \
+**Libraries** \
+
+```
+    1. rstr (For synthetic trace generation)
+    2. pyvis (Interactive Python Visualizer)
+    3. graphviz pygraphviz (For drawing the Timed Automaton)
+    4. seaborn, tabulate (For ploting result)
+```
+
+The above packages can be silently installed using
+```
+    !pip install -q graphviz seaborn tabulate rstr pyvis
+    !apt-get -qq install graphviz graphviz-dev -y && pip install -q pygraphviz;
+```
+
+## Folder Structure
+```
+    ├── Dataset     [Contains the Dataset for pattern extraction. Sample trace files provided]
+    │   ├── synthetic_trace2.csv
+    │   └── synthetic_trace.csv
+    ├── LICENSE
+    ├── PatternMiner        [Dominant and Temporal Pattern Miners]
+    │   ├── DominantPatternMiner.py
+    │   ├── TemporalPatternMiner.py
+    │   └── TemporalPatternTemplate.py
+    ├── Predictor           [Event Predictor]
+    │   ├── EventPredictor.py
+    ├── README.md
+    ├── Result              [Results are stored in this folder. Some common files are dominant/temporal pattern csv, State diagram, Transition diagram and Event Prediction plot]
+    │   ├── dominant_patterns.csv
+    │   ├── event_prediction_plot.png
+    │   ├── State diagram.gv
+    │   ├── State diagram.gv.png
+    │   ├── temporal_patterns.csv
+    │   ├── Transition diagram.gv
+    │   └── Transition diagram.gv.png
+    ├── temporalMiner.py    [Sample file providing example on the usage of the model]
+    ├── TimedTrie.py        [Base class for TimedTrie]
+    ├── TrieNode.py         [Base class for TrieNode]
+    └── Utility             [Util folder]
+        ├── SampleTraceUtil.py
+        ├── TimedTrieVisualizer.py
+        └── Util.py
+    
+    8 directories, 12 files
+```
+
+Sample file (`temporalMiner.py`) is divided into 5 parts. They are as follow:
+
+1. Necessary imports, reading trace file, preprocessing
+2. Build Model
+3. Extract Pattern (Dominant and Temporal)
+4. Event Prediction (using a trace for which the next subsequent event has to be predicted)
+5. Visualize the Timed Automaton.
+6. Save result (miscellaneous)
+
+## Usage
+For quick usage, the following command can be executed
+
+` python temporalMiner.py --inputpath Dataset/synthetic_trace.csv `
+
+For additional tweaking with the model, please see `temporalMiner.py`. It contains more description on the how to use each module. Major building blocks are to 
+* Read trace file
+* Build Timed Trie Model
+* Extract patterns
+* Visualize
+* Perform event prediction (if there is a necessity to predict the next subsequent event)
+
+## License
+Restricted License. Cannot be replicated or used without prior authorization.
