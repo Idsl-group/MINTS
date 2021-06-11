@@ -30,3 +30,22 @@ def getTimeShift(time):
 
 def doesStringContains(str="", whichWord=""):
     return str.find(whichWord) > -1
+
+def preprocess_input_file(file_path=""):
+    """
+        Read and preprocess input file
+
+        :param file_path: Input file path
+        :return: Tuple of event and time
+    """
+
+    if file_path == "":
+        print("Provide an input file path")
+        return
+
+    trace_df = pd.read_csv(file_path)
+
+    time = list(map(int, list(trace_df.loc[:, "Time"].values)))
+    event = list(trace_df.loc[:, "Event"].values)
+
+    return (list(event), time)

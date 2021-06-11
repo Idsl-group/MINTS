@@ -4,6 +4,8 @@ import TemporalPatternTemplate as temporalTemplate
 import TimedTrie
 from Utility import Util
 
+import pandas as pd
+import tabulate
 
 class TemporalPatternMiner:
     def __init__(self, timedTrie: TimedTrie, timed_trace):
@@ -20,6 +22,7 @@ class TemporalPatternMiner:
             "MULTICAUSE_PATTERN_REGEX": []
         }
 
+        self.extracted_pattern = []
         self.Alphabets = sorted(list(set(self.timed_trace[0])))
 
     """#### Begin extraction of temporal properties """
@@ -57,9 +60,9 @@ class TemporalPatternMiner:
                             print(e)
                             print("matching_regex ", matching_regex, "  _currentPattern ", _currentPattern)
 
-    def find_all_temporal_patterns(self, extracted_pattern: list = []):
+    def extractTemporalPatterns(self):
         for key, value in temporalTemplate.PATTERN_REGEX_DIC.items():
-            self.find_matching_pattern(extracted_pattern, key)
+            self.find_matching_pattern(self.extracted_pattern, key)
 
     def printAllTemporalPatterns(self):
         for key, value in self.PATTERN_MATCHED_TEMPORAL.items():
@@ -77,3 +80,12 @@ class TemporalPatternMiner:
 
             if self.timedTrie.ENABLE_DEBUG:
                 print("--------")
+
+    def printAllTemporalPatterns_pretty(self):
+        self.printAllTemporalPatterns()
+        temporalPatternList_DF = pd.DataFrame(self.temporal_patterns_pat_str_count,
+                                              columns=["Type", "FromToEvent", "Pattern", "Count", "Support",
+                                                       "Confidence"])
+        temporalPatternList_DF.sort_values(by=["Count"], ascending=False, inplace=True)
+
+        print(tabulate(temporalPatternList_DF, headers='keys', tablefmt='psql'))

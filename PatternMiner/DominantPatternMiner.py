@@ -3,6 +3,8 @@ import copy
 import TrieNode
 import TimedTrie
 import copy
+import pandas as pd
+import tabulate
 
 import TimedTrie
 import TrieNode
@@ -15,9 +17,10 @@ class PatternMiner:
 
         self.timedTrie = timedTrie
         self.timed_trace = timed_trace  # the entire trace
+        self.max_depth = self.timedTrie.K
 
-    def extractPattern(self, node: TrieNode, max_d: int, current_d: int, current_path: list = []):
-        if current_d > max_d:
+    def extractPattern(self, node: TrieNode, current_d: int = 0, current_path: list = []):
+        if current_d > self.max_depth:
             return;
 
         currentPattern = ""
@@ -27,7 +30,7 @@ class PatternMiner:
                 new_path = current_path + [child]
                 self.extractedPatternList.append((copy.copy(new_path)))
 
-                inner_patterns = self.extractPattern(child, max_d, current_d + 1, copy.copy(new_path))
+                inner_patterns = self.extractPattern(child, current_d + 1, copy.copy(new_path))
 
     # Find the number of matching patterns
     def findMatchingPatterns(self, pattern_to_test):
@@ -60,9 +63,9 @@ class PatternMiner:
 
         return [round(support, 5), round(confidence, 5)];
 
-    def printFromPatternList(self, patternList: list = [], patternList_str_count=[], returnPatternCount=False):
+    def printFromPatternList(self, returnPatternCount=False):
 
-        for _ele in patternList:
+        for _ele in self.extractedPatternList:
             _currentPattern = ""
             _plain_pattern = []
             for idx, inner_ele in enumerate(_ele):
@@ -81,7 +84,16 @@ class PatternMiner:
                 return [_currentPattern, inner_ele.count, support_conf[0],
                         support_conf[1]]  # so that the callee can make changes accordingly
             else:
-                patternList_str_count.append([_currentPattern, inner_ele.count, support_conf[0], support_conf[1]])
+                self.extractedPatternList_str_count.append([_currentPattern, inner_ele.count, support_conf[0], support_conf[1]])
+
+    def printPatternList_pretty(self):
+
+        self.printFromPatternList(False)
+        extractedPatternList_DF = pd.DataFrame(self.extractedPatternList_str_count,
+                                               columns=["Pattern", "Count", "Support", "Confidence"])
+        extractedPatternList_DF.sort_values(by=["Count"], ascending=False, inplace=True)
+
+        print(tabulate(extractedPatternList_DF, headers='keys', tablefmt='psql'))
 
 
     """#Pruned Trie Model"""
