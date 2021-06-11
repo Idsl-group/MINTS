@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import tabulate
 
 import TimedTrie
 import TrieNode
@@ -13,8 +15,6 @@ class EventPredictor:
                                                              15);  # Plot fails for large alpbhabet size
 
         self.Alphabets = sorted(list(set(self.timed_trace[0])))
-        self.tp_max = 10  # Look into this
-        self.time_probability = np.zeros((self.tp_max, len(self.Alphabets)))
         self.timedTrie = timedTrie
         self.timed_trace = timed_trace  # the entire trace
 
@@ -50,9 +50,10 @@ class EventPredictor:
 
         return
 
-    def fill_time_probability_mat_on_lookBack(self, root: TrieNode, sub_sub_trace, variable_lookback: bool = True):
+    def fill_time_probability_mat_on_lookBack(self, sub_sub_trace, variable_lookback: bool = True):
 
         subTrace_len = len(sub_sub_trace[0])
+        root = self.timedTrie
 
         for _k in list(range(subTrace_len, 0, -1)):
             if variable_lookback == False and _k < subTrace_len:
@@ -71,6 +72,15 @@ class EventPredictor:
         if self.timedTrie.ENABLE_DEBUG:
             print("Count list ", self.time_probability)
         self.evaluate_time_probability_using_count()
+
+    def predict(self, subtrace_timed):
+        self.tp_max = Util.get_time_length_based_on_lookback(subtrace_timed, self.VARIABILITY_OF_LOOKBACK)  # Look into this
+        self.time_probability = np.zeros((self.tp_max, len(self.Alphabets)))
+
+        self.fill_time_probability_mat_on_lookBack(subtrace_timed)
+
+        time_probability_DF = pd.DataFrame(self.time_probability, columns=self.Alphabets, index=list(range(1, self.tp_max + 1)))
+        print(tabulate(time_probability_DF, headers='keys', tablefmt='psql'))
 
     """#Plot Area Timed_Area graph"""
 

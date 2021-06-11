@@ -4,6 +4,8 @@ import argparse
 import Utility.Util as util
 from TimedTrie import TimedTrie
 from PatternMiner import DominantPatternMiner, TemporalPatternMiner
+from Utility import SampleTraceUtil, TimedTrieVisualizer
+from Predictor import EventPredictor
 
 """
     Read input file path from argument
@@ -42,11 +44,6 @@ timed_trie_model = TimedTrie(params)
 timed_automata = timed_trie_model.buildGraph(timed_trace)
 
 """
-    Visualize
-"""
-
-
-"""
     Extract Pattern
 """
 
@@ -62,5 +59,25 @@ temporal_pattern_miner_model.printAllTemporalPatterns_pretty()
 
 
 """
-    
+   Event Prediction 
 """
+
+# Replace the following line with a trace for which the next event has to be predicted
+sample_sub_trace = SampleTraceUtil(params.depth, timed_trace)
+
+event_predicted_model = EventPredictor.EventPredictor(timed_automata, timed_trace)
+event_predicted_model.predict(sample_sub_trace)
+event_predicted_model.plot_time_probability()
+
+"""
+    Visualize
+"""
+
+TimedTrieVisualizer.renderTrie(timed_automata, "State diagram", True)
+TimedTrieVisualizer.renderTrie(timed_automata, "Transition diagram", False)
+
+# Only for DOMINANT PATTERN Visualization (this is pruned version)
+# pruned_timed_automata = dominant_pattern_miner_model.buildGraphPrunedTrie() # with dominant patterns
+# TimedTrieVisualizer.renderTrie(pruned_timed_automata, "timed_trie_pruned_state_diagram", True)
+# TimedTrieVisualizer.renderTrie(pruned_timed_automata, "timed_trie_pruned", False)
+

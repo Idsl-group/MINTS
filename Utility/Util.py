@@ -49,3 +49,45 @@ def preprocess_input_file(file_path=""):
     event = list(trace_df.loc[:, "Event"].values)
 
     return (list(event), time)
+
+
+def determine_time_length(sub_sub_trace=[]):
+    t_max = -1;
+    pos = 0;
+    sub_sub_trace_timeShifted = getTimeShift(sub_sub_trace[1])
+
+    global timed_trie
+    root = timed_trie
+
+    while pos < len(sub_sub_trace[0]):
+        _e, _t = sub_sub_trace[0][pos], sub_sub_trace_timeShifted[pos]
+        for _child in root.children:
+            if _child.char == _e and _child.t_min <= _t and _child.t_max >= _t:
+
+                if pos == len(sub_sub_trace[0])-1:
+                    for ___child in _child.children:
+                        t_max = max(___child.t_list)
+
+                root = _child
+                break; # break for
+
+        pos += 1
+
+    return t_max;
+
+def get_time_length_based_on_lookback(subTrace, variable_lookback: bool = True):
+
+    t_max = 0;
+    subTrace_len = len(subTrace[0])
+
+    for _k in list(range(subTrace_len, 0, -1)):
+        if variable_lookback == False and _k < subTrace_len:
+            break;
+
+        sub_sub_trace = subTrace[0][-_k:]
+        sub_sub_trace_time = subTrace[1][-_k:]
+
+        __t_max_sub = determine_time_length((sub_sub_trace, sub_sub_trace_time))
+        t_max = max(t_max, __t_max_sub)
+
+    return t_max

@@ -1,7 +1,6 @@
 from graphviz import Digraph
 
 import TrieNode
-from Utility import Util
 
 
 def traverseAndCreaseDigraph(dot: Digraph, node: TrieNode, state_graph=False):
