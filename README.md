@@ -94,7 +94,7 @@ Few Temporal properties extracted from the Hexcopter trace (`hexcopter_trace.csv
 
 ### Synthetic Result
 
-####Complexity analysis
+#### Complexity analysis
 
 [Please note, with every execution the results will change however it should follow the below trend. The following results are an average of 10 trials]
 
