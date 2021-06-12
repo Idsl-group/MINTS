@@ -3,3 +3,5 @@
 
 #Not this director
 !.gitignore
+!synthetic_trace.csv
+!hexcopter_trace.csv
