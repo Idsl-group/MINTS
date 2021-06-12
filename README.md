@@ -73,6 +73,8 @@ Sample file (`temporalMiner.py`) is divided into 5 parts. They are as follow:
 For quick usage, the following command can be executed
 
 ` python temporalMiner.py --inputpath Dataset/synthetic_trace.csv `
+or \
+` python temporalMiner.py --inputpath Dataset/hexcopter_trace.csv `
 
 For additional tweaking with the model, please see `temporalMiner.py`. It contains more description on the how to use each module. Major building blocks are to 
 * Read trace file
@@ -80,6 +82,28 @@ For additional tweaking with the model, please see `temporalMiner.py`. It contai
 * Extract patterns
 * Visualize
 * Perform event prediction (if there is a necessity to predict the next subsequent event)
+
+## Result
+#### Hexcopter Result
+
+Five interesting dominant properties extracted from the Hexcopter trace (`hexcopter_trace.csv`)
+![Dominant Properties](Result/Five%20Dominant%20Property%20Hexcopter.png)
+
+Few Temporal properties extracted from the Hexcopter trace (`hexcopter_trace.csv`)
+![Temporal Properties](Result/Temporal%20Property%20Hexcopter.png)
+
+### Synthetic Result
+
+####Complexity analysis
+
+[Please note, with every execution the results will change however it should follow the below trend. The following results are an average of 10 trials]
+
+![Trace Length vs Time](Result/Trace%20Length%20vs%20Time.png)
+
+![Alpbabet Size vs Time](Result/Alpbabet%20Size%20vs%20Time.png)
+
+![Depth of Timed Trie vs Time](Result/Depth%20of%20Timed%20Trie%20vs%20Time.png)
+
 
 ## License
 Restricted License. Cannot be replicated or used without prior authorization.
