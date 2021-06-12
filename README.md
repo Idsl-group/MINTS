@@ -13,7 +13,7 @@ Welcome. This repository contains implementation for our paper called 'MINTS: Un
 **OS (tested on)**: Ubuntu 18.04.5 LTS x86_64 \
 **System Spec (tested on)** Intel i7-2630QM (8) @ 2.900GHz, 8 GB DDR3, 256 GB SSD \
 **Language:** Python 3 \
-**Libraries** \
+**Libraries**
 
 ```
     1. rstr (For synthetic trace generation)
