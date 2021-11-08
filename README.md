@@ -1,6 +1,11 @@
 # MINTS: Unsupervised Temporal Specification Miner
 
-Welcome. This repository contains implementation for our paper called 'MINTS: Unsupervised Temporal Specification Miner' 
+Welcome. This repository contains implementation for our paper
+
+## Paper
+*<u>Title</u>*: MINTS: Unsupervised Temporal Specification Miner
+*<u>Conference</u>*: [International Conference on Software Quality, Reliability, and Security, 2021](https://qrs21.techconf.org/)
+
 
 ## Objective
 * Build a Time Automaton (TA) using event-time series trace.
@@ -10,9 +15,9 @@ Welcome. This repository contains implementation for our paper called 'MINTS: Un
 
 ## Package Requirement
 
-**OS (tested on)**: Ubuntu 18.04.5 LTS x86_64 \
-**System Spec (tested on)** Intel i7-2630QM (8) @ 2.900GHz, 8 GB DDR3, 256 GB SSD \
-**Language:** Python 3 \
+**OS (tested on)**: Ubuntu 18.04.5 LTS x86_64
+**System Spec (tested on)** Intel i7-2630QM (8) @ 2.900GHz, 8 GB DDR3, 256 GB SSD
+**Language:** Python 3.6.11
 **Libraries**
 
 ```
